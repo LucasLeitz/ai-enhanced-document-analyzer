@@ -7,9 +7,6 @@ from app.models.document import Document
 app = FastAPI()
 app.include_router(documents.router)
 
-Base.metadata.create_all(bind=engine)
-
-
 @app.get("/")
 def root():
     return {"message": "API is running "}
