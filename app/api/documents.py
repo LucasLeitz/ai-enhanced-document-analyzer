@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 from pypdf import PdfReader
+from docx import Document as DocxDocument
 import io
 
 from app.db.session import get_db
@@ -37,18 +38,49 @@ def create_document(document: DocumentCreate, db: Session = Depends(get_db)):
 @router.post("/documents/upload")
 async def upload_document(file: UploadFile = File(...), db: Session = Depends(get_db)):
     content = await file.read()
+    file_name = file.filename.lower()
 
-    if file.filename.lower().endswith((".pdf", ".PDF")):
-        pdf_reader = PdfReader(io.BytesIO(content))
-        text = ""
+    try:
+        if file_name.endswith(".pdf"):
+            pdf_reader = PdfReader(io.BytesIO(content))
+            text = ""
 
-        for page in pdf_reader.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text += page_text + "\n"
+            for page in pdf_reader.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "\n"
 
-    else:
-        text = content.decode("utf-8")
+        elif file_name.endswith(".docx"):
+            docx_file = DocxDocument(io.BytesIO(content))
+            text = ""
+
+            for paragraph in docx_file.paragraphs:
+                if paragraph.text:
+                    text += paragraph.text + "\n"
+
+        elif file_name.endswith(".txt") or file_name.endswith(".md"):
+            text = content.decode("utf-8")
+
+        else:
+            raise HTTPException(
+                status_code = 400,
+                detail = "Unsupported file type. Please upload a .txt, .md, .pdf, or .docx file."
+            )
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="Could not read file. Please make sure the file is valid and not corrupted."
+        )
+
+    if not text.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="No readable text found in file."
+        )
 
     db_document = Document(
         title=file.filename,
