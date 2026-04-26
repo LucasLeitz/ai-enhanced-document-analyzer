@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.models.document import Document
-from app.schemas.document import DocumentCreate, DocumentResponse, DocumentRead
+from app.schemas.document import DocumentCreate, DocumentResponse, DocumentRead, DocumentQuestion
+from app.services.ai_service import summarize_text, answer_question_about_text
+from app.services.document_service import get_document_or_404
 
 router = APIRouter()
 
@@ -52,9 +54,55 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
 
 @router.get("/documents/{document_id}", response_model=DocumentRead)
 def get_document(document_id: int, db: Session = Depends(get_db)):
-    document = db.query(Document).filter(Document.id == document_id).first()
+    return get_document_or_404(document_id, db)
 
-    if not document:
-        raise HTTPException(status_code=404, detail="Document not found")
+@router.post("/documents/{document_id}/summarize")
+def summarize_document(document_id: int, db: Session = Depends(get_db)):
+    document = get_document_or_404(document_id, db)
+    summary = summarize_text(document.content)
 
-    return document
+    return {
+        "document_id": document_id,
+        "title": document.title,
+        "summary": summary
+    }
+
+@router.post("/documents/{document_id}/ask")
+def ask_document_question(
+        document_id: int,
+        request: DocumentQuestion,
+        db: Session = Depends(get_db)
+):
+    document = get_document_or_404(document_id, db)
+
+    answer = answer_question_about_text(document.content, request.question)
+
+    return {
+        "document_id": document.id,
+        "title": document.title,
+        "question": request.question,
+        "answer": answer
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

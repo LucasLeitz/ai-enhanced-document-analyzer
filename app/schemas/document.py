@@ -16,3 +16,6 @@ class DocumentRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+class DocumentQuestion(BaseModel):
+    question: str
