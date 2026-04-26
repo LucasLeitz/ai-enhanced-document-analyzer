@@ -10,5 +10,8 @@
     "type": "git",
     "url": "https://github.com/LucasLeitz/ai-enhanced-document-analyzer.git"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "vite": "^8.0.10"
+  }
 }
