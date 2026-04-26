@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
+from pypdf import PdfReader
+import io
 
 from app.db.session import get_db
 from app.models.document import Document
@@ -35,7 +37,18 @@ def create_document(document: DocumentCreate, db: Session = Depends(get_db)):
 @router.post("/documents/upload")
 async def upload_document(file: UploadFile = File(...), db: Session = Depends(get_db)):
     content = await file.read()
-    text = content.decode("utf-8")
+
+    if file.filename.lower().endswith((".pdf", ".PDF")):
+        pdf_reader = PdfReader(io.BytesIO(content))
+        text = ""
+
+        for page in pdf_reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text + "\n"
+
+    else:
+        text = content.decode("utf-8")
 
     db_document = Document(
         title=file.filename,
