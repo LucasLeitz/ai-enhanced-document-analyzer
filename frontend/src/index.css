@@ -1,10 +1,125 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  padding: 40px;
-  background: #f5f5f5;
+  font-family: Inter, system-ui, Arial, sans-serif;
+  background:
+          radial-gradient(circle at top left, #1f3b73, transparent 35%),
+          radial-gradient(circle at bottom right, #4c1d95, transparent 35%),
+          #0b1020;
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+header {
+  margin-bottom: 32px;
+}
+
+header a {
+  text-decoration: none;
+  color: inherit;
 }
 
 h1 {
-  margin-bottom: 10px;
+  font-size: 3rem;
+  margin-bottom: 12px;
+  background: linear-gradient(90deg, #93c5fd, #c4b5fd, #f0abfc);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+section {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 24px;
+  padding: 28px;
+  margin-top: 24px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(18px);
+}
+
+section:hover {
+  transform: translateY(-2px);
+  transition: 0.2s ease;
+}
+
+button {
+  margin: 12px 8px 12px 0;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563eb, #7c3aed);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
+}
+
+button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+input {
+  display: block;
+  width: 100%;
+  max-width: 650px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(2, 6, 23, 0.8);
+  color: #e5e7eb;
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: 2px solid #60a5fa;
+}
+
+ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+li {
+  margin: 12px 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+li:hover {
+  background: rgba(51, 65, 85, 0.85);
+  transform: translateX(4px);
+  transition: 0.2s ease;
+}
+
+a {
+  color: #93c5fd;
+  font-weight: 700;
+}
+
+pre {
+  white-space: pre-wrap;
+  background: rgba(2, 6, 23, 0.75);
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  max-height: 500px;
+  overflow: auto;
 }
