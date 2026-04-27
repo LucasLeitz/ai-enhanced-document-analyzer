@@ -4,16 +4,21 @@ from app.core.config import OLLAMA_BASE_URL, OLLAMA_MODEL
 
 def summarize_text(text: str) -> str:
     response = requests.post(
-        "http://localhost:11434/api/generate",
+        f"{OLLAMA_BASE_URL}/api/generate",
         json={
-            "model": "llama3",
+            "model": OLLAMA_MODEL,
             "prompt": f"Summarize this document clearly:\n\n{text}",
             "stream": False
         }
     )
-    
+
     data = response.json()
+
+    if "response" not in data:
+        raise Exception(f"Ollama error: {data}")
+
     return data["response"]
+
 
 def answer_question_about_text(text: str, question: str) -> str:
     prompt = f"""
@@ -38,4 +43,8 @@ Answer clearly and concisely. If the answer is not in the document, say that the
     )
 
     data = response.json()
+
+    if "response" not in data:
+        raise Exception(f"Ollama error: {data}")
+
     return data["response"]

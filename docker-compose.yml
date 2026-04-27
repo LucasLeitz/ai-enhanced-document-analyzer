@@ -11,5 +11,50 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  backend:
+    build: .
+    container_name: document-analyzer-backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/document_analyzer
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: llama3.2:1b
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - ollama
+      - ollama-init
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: document-analyzer-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: document-analyzer-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: document-analyzer-ollama-init
+    depends_on:
+      - ollama
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: >
+      sh -c "
+      sleep 5 &&
+      ollama pull llama3.2:1b
+      "
+
 volumes:
   postgres_data:
+  ollama_data:
