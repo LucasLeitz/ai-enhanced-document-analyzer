@@ -11,4 +11,5 @@ AI-powered document analysis platform that allows users to upload files and ask 
    4b. npm run dev
 
 Swagger UI (local): http://127.0.0.1:8000/docs
+Frontend: http://localhost:5173/
 
